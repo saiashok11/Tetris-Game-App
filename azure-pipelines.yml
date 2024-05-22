@@ -7,7 +7,6 @@ trigger:
 
 resources:
 - repo: self
-
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '2588a013-a55f-4250-9d24-e24ed94d5fbc'
@@ -28,9 +27,12 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-- task: Docker@2
-  inputs:
-    containerRegistry: 'ProjectServiceconnection'
-    repository: 'projectrg02.azurecr.io'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
